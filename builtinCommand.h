@@ -3,9 +3,8 @@
 
 typedef enum
 {
-    jason,
-    abril,
-    diana,
+    cd,
+    path,
     endup,
     not_command
 } builtinCommand;
@@ -15,9 +14,8 @@ const static struct
     builtinCommand command;
     char *stringCommand;
 } commands[] = {
-    {jason, "jason"},
-    {abril, "abril"},
-    {diana, "diana"},
+    {cd, "cd"},
+    {path, "path"},
     {endup, "exit"}};
 
 builtinCommand strToCommand(char *strCommand);

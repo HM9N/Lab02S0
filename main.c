@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #include "builtinCommand.h"
 
 #define MAX_SIZE 100
@@ -24,19 +25,18 @@ int main(int argc, char *argv[])
             p++;
         }
         *p = '\0';
-         builtinCommand command = strToCommand(str);
+        builtinCommand command = strToCommand(str);
         if (command != not_command)
         {
             switch (command)
             {
-            case jason:
-                printf("Jason Executed\n");
+            case cd:
+                /* printf("cd Executed\n"); */
+                printf("Hello ");
+                printf("ya ejecuté");
                 break;
-            case abril:
-                printf("Abril Executed\n");
-                break;
-            case diana:
-                printf("Diana Executed\n");
+            case path:
+                printf("path Executed\n");
                 break;
             case endup:
                 exit(0);
