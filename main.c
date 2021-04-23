@@ -16,12 +16,12 @@ Código realizado por Jhon Vásquez para el curso de Sistemas Operativos de la U
 
 int main(int argc, char *argv[])
 {
-    printf("%d", argc);
     char *searchPath[MAX_SIZE_SEARCH_PATH];
     searchPath[0] = "/bin/";
     char commandSearched[100];
     strcpy(commandSearched, searchPath[0]);
     char str[MAX_SIZE];
+    int pathCounter = 1;
 
     do
     {
@@ -59,8 +59,13 @@ int main(int argc, char *argv[])
         }
         else
         {
-            // printf("Buscar el comando en la ruta path\n");
-            int existPaths = existPath(searchPath, str);
+            // Busca el ejecutable en las rutas, si ejecuta el programa devuelve un uno, en caso contrario devuelve un 0
+            /* int existPaths = searchAndExecute(searchPath, arr, pathCounter);
+            if (existPaths == 1)
+            {
+                printf("Sí existe");
+            } */
+            executeCommand();
         }
     } while (strcmp(str, "exit\n"));
 
