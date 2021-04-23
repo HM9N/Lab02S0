@@ -1,9 +1,9 @@
 #include <string.h>
 #include "builtinCommand.h"
- 
+
 builtinCommand strToCommand(char *strCommand)
 {
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < 3; i++)
     {
         if (strcmp(strCommand, commands[i].stringCommand) == 0)
         {

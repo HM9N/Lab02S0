@@ -3,8 +3,10 @@
 #include <string.h>
 #include <unistd.h>
 #include "builtinCommand.h"
+#include "pathModule.h"
 
 #define MAX_SIZE 100
+#define MAX_SIZE_SEARCH_PATH 300
 
 /************************************************************************************************* 
   **********************************************************************************************
@@ -14,11 +16,21 @@ Código realizado por Jhon Vásquez para el curso de Sistemas Operativos de la U
 
 int main(int argc, char *argv[])
 {
+    printf("%d", argc);
+    char *searchPath[MAX_SIZE_SEARCH_PATH];
+    searchPath[0] = "/bin/";
+    char commandSearched[100];
+    strcpy(commandSearched, searchPath[0]);
     char str[MAX_SIZE];
+
     do
     {
         printf("wish> ");
-        fgets(str, MAX_SIZE, stdin);
+        if (argc == 1)
+        {
+            fgets(str, MAX_SIZE, stdin);
+        }
+        char *arr[] = {"ls", NULL};
         char *p = str;
         while (*p != '\n')
         {
@@ -31,9 +43,9 @@ int main(int argc, char *argv[])
             switch (command)
             {
             case cd:
-                /* printf("cd Executed\n"); */
-                printf("Hello ");
-                printf("ya ejecuté");
+                /*  strcat(commandSearched, str);
+                printf("%s", commandSearched);
+                execv(commandSearched, arr); */
                 break;
             case path:
                 printf("path Executed\n");
@@ -47,7 +59,10 @@ int main(int argc, char *argv[])
         }
         else
         {
-            printf("Buscar el comando en la ruta path\n");
+            // printf("Buscar el comando en la ruta path\n");
+            int existPaths = existPath(searchPath, str);
         }
     } while (strcmp(str, "exit\n"));
+
+    return 0;
 }
