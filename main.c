@@ -17,7 +17,7 @@ Código realizado por Jhon Vásquez para el curso de Sistemas Operativos de la U
 int main(int argc, char *argv[])
 {
     char *searchPath[MAX_SIZE_SEARCH_PATH];
-    searchPath[0] = "/bin/";
+    searchPath[0] = "/bin";
     char commandSearched[100];
     strcpy(commandSearched, searchPath[0]);
     char str[MAX_SIZE];
@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
         {
             fgets(str, MAX_SIZE, stdin);
         }
-        char *arr[] = {"ls", NULL};
+        char *arr[] = {str, NULL};
         char *p = str;
         while (*p != '\n')
         {
@@ -40,12 +40,12 @@ int main(int argc, char *argv[])
         builtinCommand command = strToCommand(str);
         if (command != not_command)
         {
+            char *aux = "/bin/ls";
+            char *arguments[] = {"ls", NULL};
             switch (command)
             {
             case cd:
-                /*  strcat(commandSearched, str);
-                printf("%s", commandSearched);
-                execv(commandSearched, arr); */
+                execv(aux, arguments);
                 break;
             case path:
                 printf("path Executed\n");
@@ -59,13 +59,17 @@ int main(int argc, char *argv[])
         }
         else
         {
+            int pathPosition = 0;
             // Busca el ejecutable en las rutas, si ejecuta el programa devuelve un uno, en caso contrario devuelve un 0
-            /* int existPaths = searchAndExecute(searchPath, arr, pathCounter);
+            int existPaths = searchPaths(searchPath, arr, pathCounter, &pathPosition);
             if (existPaths == 1)
             {
-                printf("Sí existe");
-            } */
-            executeCommand();
+                executeCommand(searchPath[pathPosition], arr);
+            }
+            else
+            {
+                printf("No existe el comando \n");
+            }
         }
     } while (strcmp(str, "exit\n"));
 

@@ -1,10 +1,10 @@
 #ifndef S_PATH_H
 #define S_PATH_H
 
-int searchAndExecute(char **path, char *args[], int pathCounter);
+int searchPaths(char **path, char *args[], int pathCounter, int *pathPosition);
 
 int isPath(char *path);
 
-void executeCommand();
+void executeCommand(char *path, char *args[]);
 
 #endif

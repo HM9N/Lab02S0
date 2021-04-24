@@ -4,6 +4,7 @@
         "searchpath.h": "c",
         "string.h": "c",
         "unistd.h": "c",
-        "pathmodule.h": "c"
+        "pathmodule.h": "c",
+        "stdlib.h": "c"
     }
 }

@@ -8,28 +8,30 @@
 
 int isPath(char *path)
 {
-    if (!access("/bin/ls", X_OK))
+    if (!access(path, X_OK))
     {
         return 1;
     }
     return 0;
 }
 
-int searchAndExecute(char **path, char *args[], int pathCounter)
+int searchPaths(char **path, char *args[], int pathCounter, int *pathPosition)
 {
-    /*     printf("%s ", path[0]);
-    printf("%s ", args[0]);
-    printf("%d ", pathCounter); */
+    char *bar = "/";
     int exists = 0;
-
     int i = 0;
+    char pathAndFile[100];
 
     while (i < pathCounter)
     {
-        exists = isPath(path[i]);
+        strcpy(pathAndFile, path[i]);
+        strcat(pathAndFile, bar);
+        strcat(pathAndFile, args[0]);
+        exists = isPath(pathAndFile);
         i++;
     }
 
+    *pathPosition = i - 1;
     if (exists == 1)
     {
         return 1;
@@ -38,7 +40,7 @@ int searchAndExecute(char **path, char *args[], int pathCounter)
     return 0;
 }
 
-void executeCommand()
+void executeCommand(char *path, char *args[])
 {
     printf("Soy el proceso padre %d \n", (int)getpid());
     int rc = fork();
@@ -49,11 +51,26 @@ void executeCommand()
     }
     else if (rc == 0)
     {
-        printf("Soy el proceso hijo %d \n", (int)getpid());
+        char aux[100];
+        char *bar = "/";
+        strcpy(aux, path);
+        int i = 0;
+        char *const *arguments = args;
+        strcat(aux, bar);
+        strcat(aux, arguments[0]);
+        while (arguments[i] != NULL)
+        {
+            printf("argumento : %s \n", arguments[i]);
+            i++;
+        }
+        int error = execv(aux, arguments);
+        if (error == -1)
+        {
+            printf("Puto error");
+        }
     }
     else
     {
         int rc_wait = wait(NULL);
-        printf("Hola, al fin me dejan ejecutar (soy el proceso padre) %d ", (int)getpid());
     }
 }
