@@ -6,8 +6,13 @@
 #include <sys/wait.h>
 #include "pathModule.h"
 
+void modifySearchPath(char *searchPath[])
+{
+}
+
 int isPath(char *path)
 {
+    printf("hola%s d", path);
     if (!access(path, X_OK))
     {
         return 1;
@@ -15,13 +20,13 @@ int isPath(char *path)
     return 0;
 }
 
+
 int searchPaths(char **path, char *args[], int pathCounter, int *pathPosition)
 {
     char *bar = "/";
     int exists = 0;
     int i = 0;
     char pathAndFile[100];
-
     while (i < pathCounter)
     {
         strcpy(pathAndFile, path[i]);
@@ -58,11 +63,21 @@ void executeCommand(char *path, char *args[])
         char *const *arguments = args;
         strcat(aux, bar);
         strcat(aux, arguments[0]);
+        /*    int j = 1;
+        while (args[j] != NULL)
+        {
+            strcat(aux, " ");
+            strcat(aux, args[j]);
+            j++;
+        } */
+
         while (arguments[i] != NULL)
         {
             printf("argumento : %s \n", arguments[i]);
             i++;
         }
+
+      //  printf("ejecutaré: %s", arguments);
         int error = execv(aux, arguments);
         if (error == -1)
         {

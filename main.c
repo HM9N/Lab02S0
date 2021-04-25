@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include "builtinCommand.h"
 #include "pathModule.h"
+#include "textTools.h"
 
 #define MAX_SIZE 100
 #define MAX_SIZE_SEARCH_PATH 300
@@ -20,23 +21,24 @@ int main(int argc, char *argv[])
     searchPath[0] = "/bin";
     char commandSearched[100];
     strcpy(commandSearched, searchPath[0]);
-    char str[MAX_SIZE];
+    char *str = (char *)malloc(sizeof(char) * MAX_SIZE);
+    char *arr[MAX_SIZE];
     int pathCounter = 1;
-
     do
     {
         printf("wish> ");
         if (argc == 1)
         {
             fgets(str, MAX_SIZE, stdin);
+            replaceLineBreak(&str);
+            char *strAux = (char *)malloc(sizeof(char) * MAX_SIZE);
+            strcpy(strAux, str);
+            int windex = 0;
+            while ((arr[windex] = strsep(&strAux, " ")) != NULL)
+                windex++;
+            arr[windex] = NULL;
+            free(strAux);
         }
-        char *arr[] = {str, NULL};
-        char *p = str;
-        while (*p != '\n')
-        {
-            p++;
-        }
-        *p = '\0';
         builtinCommand command = strToCommand(str);
         if (command != not_command)
         {
@@ -59,11 +61,12 @@ int main(int argc, char *argv[])
         }
         else
         {
-            int pathPosition = 0;
+            int pathPosition = 0; // Variable para devolver la posición del path en el search path
             // Busca el ejecutable en las rutas, si ejecuta el programa devuelve un uno, en caso contrario devuelve un 0
             int existPaths = searchPaths(searchPath, arr, pathCounter, &pathPosition);
             if (existPaths == 1)
             {
+                //Función para ejecutar un comando externo
                 executeCommand(searchPath[pathPosition], arr);
             }
             else

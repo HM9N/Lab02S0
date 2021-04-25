@@ -5,6 +5,7 @@
         "string.h": "c",
         "unistd.h": "c",
         "pathmodule.h": "c",
-        "stdlib.h": "c"
+        "stdlib.h": "c",
+        "texttools.h": "c"
     }
 }
