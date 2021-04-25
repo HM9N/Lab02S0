@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <fcntl.h>
 #include "builtinCommand.h"
 #include "pathModule.h"
 #include "textTools.h"
@@ -24,8 +25,14 @@ int main(int argc, char *argv[])
     char *str = (char *)malloc(sizeof(char) * MAX_SIZE);
     char *arr[MAX_SIZE];
     int pathCounter = 1;
+    int isRed;
+    int inicio = 1;
+    int saved_stdout = dup(1);
+    int redirect_fd;
+
     do
     {
+         saved_stdout = dup(1);
         printf("wish> ");
         if (argc == 1)
         {
@@ -39,6 +46,21 @@ int main(int argc, char *argv[])
             arr[windex] = NULL;
             free(strAux);
         }
+
+        isRed = isRedirection(str);
+
+        if (isRed == 1)
+        {
+            unlink("output.txt");
+            if (inicio = 1)
+            {
+                redirect_fd = open("output.txt", O_CREAT | O_TRUNC | O_WRONLY | O_EXCL, S_IRWXU);
+                inicio = 0;
+            }
+            dup2(redirect_fd, STDOUT_FILENO);
+            close(STDOUT_FILENO);
+        }
+
         builtinCommand command = strToCommand(str);
         if (command != not_command)
         {
@@ -67,14 +89,18 @@ int main(int argc, char *argv[])
             if (existPaths == 1)
             {
                 //Función para ejecutar un comando externo
-                executeCommand(searchPath[pathPosition], arr);
+                executeCommand(searchPath[pathPosition], arr, isRed);
             }
             else
             {
                 printf("No existe el comando \n");
             }
         }
+        dup2(saved_stdout, 1);
     } while (strcmp(str, "exit\n"));
+
+    close(saved_stdout);
+    close(redirect_fd);
 
     return 0;
 }
