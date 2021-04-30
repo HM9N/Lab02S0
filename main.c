@@ -27,7 +27,6 @@ int main(int argc, char *argv[])
     int pathCounter = 1;
     int isRed;
     int inicio = 1;
-    int saved_stdout = dup(1);
 
     do
     {
@@ -37,9 +36,10 @@ int main(int argc, char *argv[])
             fgets(str, MAX_SIZE, stdin);
             replaceLineBreak(&str);
             char *strAux = (char *)malloc(sizeof(char) * MAX_SIZE);
+            eliminateCharacters(str);
             strcpy(strAux, str);
             int windex = 0;
-            while ((arr[windex] = strsep(&strAux, " ")) != NULL)
+            while ((arr[windex] = strsep(&strAux, " \t\a\n\r")) != NULL)
                 windex++;
             arr[windex] = NULL;
             free(strAux);
@@ -83,8 +83,6 @@ int main(int argc, char *argv[])
             }
         }
     } while (strcmp(str, "exit\n"));
-
-    close(saved_stdout);
 
     return 0;
 }

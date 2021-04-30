@@ -10,6 +10,7 @@ void modifySearchPath(char *searchPath[])
 {
 }
 
+//Verifica que exista el ejecutable en la ruta especificada
 int isPath(char *path)
 {
     if (!access(path, X_OK))
@@ -19,6 +20,7 @@ int isPath(char *path)
     return 0;
 }
 
+//Organiza los argumentos y la ruta para buscar si existe el ejecutable
 int searchPaths(char **path, char *args[], int pathCounter, int *pathPosition)
 {
     char *bar = "/";
@@ -43,6 +45,7 @@ int searchPaths(char **path, char *args[], int pathCounter, int *pathPosition)
     return 0;
 }
 
+// Ejecuta el comando
 void executeCommand(char *path, char *args[], int isRed)
 {
     int rc = fork();
@@ -59,6 +62,9 @@ void executeCommand(char *path, char *args[], int isRed)
         int i = 0;
         strcat(aux, bar);
         strcat(aux, args[0]);
+        /* printf("%s \n", args[0]);
+        printf("%s \n", args[1]);
+        printf("%s \n", args[2]); */
         int error;
         if (isRed == 1)
         {
