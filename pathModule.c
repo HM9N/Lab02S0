@@ -12,7 +12,6 @@ void modifySearchPath(char *searchPath[])
 
 int isPath(char *path)
 {
-    //printf("hola%s d", path) ;
     if (!access(path, X_OK))
     {
         return 1;
@@ -46,7 +45,6 @@ int searchPaths(char **path, char *args[], int pathCounter, int *pathPosition)
 
 void executeCommand(char *path, char *args[], int isRed)
 {
-    printf("HOLA desde ExecuteCommand");
     int rc = fork();
     if (rc < 0)
     {
@@ -55,35 +53,33 @@ void executeCommand(char *path, char *args[], int isRed)
     }
     else if (rc == 0)
     {
-        printf("soy el proceso hijo %d ", getpid());
         char aux[100];
         char *bar = "/";
         strcpy(aux, path);
         int i = 0;
-        char *const *arguments = args;
         strcat(aux, bar);
-        strcat(aux, arguments[0]);
+        strcat(aux, args[0]);
         int error;
-
         if (isRed == 1)
         {
-            printf("Es redirección");
+            unlink("output.txt");
+            int redirect_fd = open("output.txt", O_CREAT | O_TRUNC | O_WRONLY | O_EXCL, S_IRWXU);
+            dup2(redirect_fd, STDOUT_FILENO);
             int i = 0;
-            char *argumentsRedirection[sizeof(arguments)];
-            while (arguments[i] != "<")
+            char *argumentsRedirection[sizeof(*args)];
+            while (*args[i] != '>')
             {
-                argumentsRedirection[i] = arguments[i];
+                argumentsRedirection[i] = args[i];
                 i++;
             }
+
             argumentsRedirection[i] = NULL;
-            printf("%s \n", aux);
+
             error = execv(aux, argumentsRedirection);
         }
         else
         {
-            printf("%d \n", isRed);
-            printf("%d \n", isRed);
-            error = execv(aux, arguments);
+            error = execv(aux, args);
         }
 
         if (error == -1)

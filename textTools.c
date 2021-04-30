@@ -15,7 +15,7 @@ void replaceLineBreak(char **line)
 
 int isRedirection(char *str)
 {
-    if (strstr(str, "<") == NULL)
+    if (strstr(str, ">") == NULL)
     {
         return 0;
     }
