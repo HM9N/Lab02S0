@@ -58,7 +58,6 @@ int main(int argc, char *argv[])
                 inicio = 0;
             }
             dup2(redirect_fd, STDOUT_FILENO);
-            close(STDOUT_FILENO);
         }
 
         builtinCommand command = strToCommand(str);
@@ -96,7 +95,7 @@ int main(int argc, char *argv[])
                 printf("No existe el comando \n");
             }
         }
-        dup2(saved_stdout, 1);
+       // dup2(saved_stdout, 1);
     } while (strcmp(str, "exit\n"));
 
     close(saved_stdout);

@@ -46,6 +46,7 @@ int searchPaths(char **path, char *args[], int pathCounter, int *pathPosition)
 
 void executeCommand(char *path, char *args[], int isRed)
 {
+    printf("HOLA desde ExecuteCommand");
     int rc = fork();
     if (rc < 0)
     {
@@ -54,6 +55,7 @@ void executeCommand(char *path, char *args[], int isRed)
     }
     else if (rc == 0)
     {
+        printf("soy el proceso hijo %d ", getpid());
         char aux[100];
         char *bar = "/";
         strcpy(aux, path);
@@ -80,7 +82,7 @@ void executeCommand(char *path, char *args[], int isRed)
         else
         {
             printf("%d \n", isRed);
-             printf("%d \n", isRed);
+            printf("%d \n", isRed);
             error = execv(aux, arguments);
         }
 
