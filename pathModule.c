@@ -6,8 +6,32 @@
 #include <sys/wait.h>
 #include "pathModule.h"
 
-void modifySearchPath(char *searchPath[])
+// Se da la opción de modificar el Search Path al ejecutar el comando integrado "path"
+void modifySearchPath(char *searchPath[], char *args[], int *pathCounter)
 {
+
+    printf("%s argumento \n", args[1]);
+
+    int i = 0;
+    char *charUsedToDelete = "\0";
+
+    if (*pathCounter == 0)
+    {
+        while (searchPath[i] != NULL)
+        {
+            searchPath[i] = "\0";
+            i++;
+        }
+    }
+    else
+    {
+        while (i < *pathCounter)
+        {
+            searchPath[i] = args[i + 1];
+            i++;
+        }
+        searchPath[i] = NULL;
+    }
 }
 
 //Verifica que exista el ejecutable en la ruta especificada
@@ -41,7 +65,6 @@ int searchPaths(char **path, char *args[], int pathCounter, int *pathPosition)
     {
         return 1;
     }
-
     return 0;
 }
 
@@ -62,9 +85,6 @@ void executeCommand(char *path, char *args[], int isRed)
         int i = 0;
         strcat(aux, bar);
         strcat(aux, args[0]);
-        /* printf("%s \n", args[0]);
-        printf("%s \n", args[1]);
-        printf("%s \n", args[2]); */
         int error;
         if (isRed == 1)
         {

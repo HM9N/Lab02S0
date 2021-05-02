@@ -20,34 +20,58 @@ int main(int argc, char *argv[])
 {
     char *searchPath[MAX_SIZE_SEARCH_PATH];
     searchPath[0] = "/bin";
+    searchPath[1] = NULL;
     char commandSearched[100];
     strcpy(commandSearched, searchPath[0]);
     char *str = (char *)malloc(sizeof(char) * MAX_SIZE);
-    char *arr[MAX_SIZE];
-    int pathCounter = 1;
-    int isRed;
-    int inicio = 1;
+    char *arr[MAX_SIZE], *pathArr[MAX_SIZE];
+    int pathCounter = 1, isRed, pathIndex;
+    FILE *file;
+
+    if (argc == 2)
+    {
+        file = fopen(argv[1], "r");
+    }
 
     do
     {
-        printf("wish> ");
         if (argc == 1)
         {
+            printf("wish> ");
             fgets(str, MAX_SIZE, stdin);
-            replaceLineBreak(&str);
-            char *strAux = (char *)malloc(sizeof(char) * MAX_SIZE);
-            eliminateCharacters(str);
-            strcpy(strAux, str);
-            int windex = 0;
-            while ((arr[windex] = strsep(&strAux, " \t\a\n\r")) != NULL)
-                windex++;
-            arr[windex] = NULL;
-            free(strAux);
         }
+        else if (argc > 2)
+        {
+            printf("Error");
+            exit(0);
+        }
+        else
+        {
+            fgets(str, 100, file);
+        }
+        replaceLineBreak(&str);
+        char *strAux = (char *)malloc(sizeof(char) * MAX_SIZE);
+        eliminateCharacters(str);
+        strcpy(strAux, str);
+        int windex = 0;
+        pathIndex = 0;
+        while ((arr[windex] = strsep(&strAux, " \t\a\n\r")) != NULL)
+        {
+            if (windex >= 1)
+            {
+                pathArr[pathIndex] == arr[windex];
+                pathIndex++;
+            }
+
+            windex++;
+        }
+
+        arr[windex] = NULL;
+        free(strAux);
 
         isRed = isRedirection(str);
 
-        builtinCommand command = strToCommand(str);
+        builtinCommand command = strToCommand(arr[0]);
         if (command != not_command)
         {
             char *aux = "/bin/ls";
@@ -59,6 +83,8 @@ int main(int argc, char *argv[])
                 break;
             case path:
                 printf("path Executed\n");
+                printf("%d pathIndex\n", pathIndex);
+                modifySearchPath(searchPath, arr, &pathIndex);
                 break;
             case endup:
                 exit(0);
