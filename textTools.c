@@ -27,6 +27,7 @@ void eliminateCharacters(char *chars)
         }
         i++;
     }
+    
 }
 
 void replaceLineBreak(char **line)

@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
     strcpy(commandSearched, searchPath[0]);
     char *str = (char *)malloc(sizeof(char) * MAX_SIZE);
     char *arr[MAX_SIZE], *pathArr[MAX_SIZE];
-    int pathCounter = 1, isRed, pathIndex;
+    int isRed, pathIndex = 0, pathCounter, pathModified = 0;
     FILE *file;
 
     if (argc == 2)
@@ -54,12 +54,18 @@ int main(int argc, char *argv[])
         eliminateCharacters(str);
         strcpy(strAux, str);
         int windex = 0;
-        pathIndex = 0;
         while ((arr[windex] = strsep(&strAux, " \t\a\n\r")) != NULL)
         {
-            if (windex >= 1)
+            if (!strcmp(arr[0], "path"))
             {
-                pathArr[pathIndex] == arr[windex];
+                pathIndex = 0;
+            }
+
+            if ((windex >= 1) && !strcmp(arr[0], "path"))
+            {
+                printf("Hola a todos\n");
+                pathArr[pathIndex] = arr[windex];
+
                 pathIndex++;
             }
 
@@ -74,17 +80,13 @@ int main(int argc, char *argv[])
         builtinCommand command = strToCommand(arr[0]);
         if (command != not_command)
         {
-            char *aux = "/bin/ls";
-            char *arguments[] = {"ls", NULL};
             switch (command)
             {
             case cd:
-                execv(aux, arguments);
                 break;
             case path:
-                printf("path Executed\n");
-                printf("%d pathIndex\n", pathIndex);
-                modifySearchPath(searchPath, arr, &pathIndex);
+                pathModified = 1;
+                modifySearchPath(searchPath, pathArr, &pathIndex);
                 break;
             case endup:
                 exit(0);
@@ -97,7 +99,23 @@ int main(int argc, char *argv[])
         {
             int pathPosition = 0; // Variable para devolver la posición del path en el search path
             // Busca el ejecutable en las rutas, si ejecuta el programa devuelve un uno, en caso contrario devuelve un 0
+            if (isRed && pathModified == 1)
+            {
+                pathCounter = pathIndex - 2;
+            }
+            else if ((pathIndex != 0) && pathModified == 1)
+            {
+                printf("Hola");
+                pathCounter = pathIndex;
+            }
+            else
+            {
+                pathCounter = 1;
+            }
+
+            printf("El pathIndex es %d \n", pathIndex);
             int existPaths = searchPaths(searchPath, arr, pathCounter, &pathPosition);
+
             if (existPaths == 1)
             {
                 //Función para ejecutar un comando externo
