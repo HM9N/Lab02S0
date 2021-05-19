@@ -63,7 +63,6 @@ int main(int argc, char *argv[])
 
             if ((windex >= 1) && !strcmp(arr[0], "path"))
             {
-                printf("Hola a todos\n");
                 pathArr[pathIndex] = arr[windex];
 
                 pathIndex++;
@@ -105,7 +104,6 @@ int main(int argc, char *argv[])
             }
             else if ((pathIndex != 0) && pathModified == 1)
             {
-                printf("Hola");
                 pathCounter = pathIndex;
             }
             else
@@ -113,7 +111,7 @@ int main(int argc, char *argv[])
                 pathCounter = 1;
             }
 
-            printf("El pathIndex es %d \n", pathIndex);
+            /* printf("El pathIndex es %d \n", pathIndex); */
             int existPaths = searchPaths(searchPath, arr, pathCounter, &pathPosition);
 
             if (existPaths == 1)

@@ -4,6 +4,7 @@
 #include "textTools.h"
 
 // Garantiza que el comando se va a ejecutar sin importar la cantidad de espacios, tabulaciones, etc.
+
 void eliminateCharacters(char *chars)
 {
     if (chars[0] == '\t' || chars[0] == '\a' || chars[0] == '\n' || chars[0] == '\r' || chars[0] == ' ')
@@ -13,6 +14,35 @@ void eliminateCharacters(char *chars)
             memmove(&chars[0], &chars[1], strlen(chars));
         }
     }
+
+    if (chars[strlen(chars) - 1] == '\t' || chars[strlen(chars) - 1] == '\a' || chars[strlen(chars) - 1] == '\n' || chars[strlen(chars) - 1] == '\r' || chars[strlen(chars) - 1] == ' ')
+    {
+        char *charsCopyAux1 = (char *)malloc(sizeof(char) * 100);
+        strcpy(charsCopyAux1, chars);
+        int j = strlen(chars) - 1;
+
+        for (int i = 0; i < strlen(chars); i++)
+        {
+            chars[i] = charsCopyAux1[j];
+            j--;
+        }
+
+        while (chars[0] == '\t' || chars[0] == '\a' || chars[0] == '\n' || chars[0] == '\r' || chars[0] == ' ')
+        {
+            memmove(&chars[0], &chars[1], strlen(chars));
+        }
+
+        char *charsCopyAux2 = (char *)malloc(sizeof(char) * 100);
+        strcpy(charsCopyAux2, chars);
+        j = strlen(chars) - 1;
+
+        for (int i = 0; i < strlen(chars); i++)
+        {
+            chars[i] = charsCopyAux2[j];
+            j--;
+        }
+    }
+
     int i = 0, j = 0, aux = 0;
 
     while (i < strlen(chars))
@@ -27,7 +57,6 @@ void eliminateCharacters(char *chars)
         }
         i++;
     }
-    
 }
 
 void replaceLineBreak(char **line)
@@ -44,6 +73,17 @@ void replaceLineBreak(char **line)
 int isRedirection(char *str)
 {
     if (strstr(str, ">") == NULL)
+    {
+        return 0;
+    }
+
+    return 1;
+}
+
+// Verifica si el texto tiene el simbolo "&"
+int isParallelCommand(char *str)
+{
+    if (strstr(str, "&") == NULL)
     {
         return 0;
     }

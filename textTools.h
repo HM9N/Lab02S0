@@ -7,4 +7,6 @@ void replaceLineBreak(char **line);
 
 int isRedirection(char *str);
 
+int isParallelCommand(char *str);
+
 #endif
