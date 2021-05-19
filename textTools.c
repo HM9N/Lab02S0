@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <unistd.h>
 #include "textTools.h"
 
 // Garantiza que el comando se va a ejecutar sin importar la cantidad de espacios, tabulaciones, etc.
@@ -41,6 +42,9 @@ void eliminateCharacters(char *chars)
             chars[i] = charsCopyAux2[j];
             j--;
         }
+
+        free(charsCopyAux1);
+        free(charsCopyAux2);
     }
 
     int i = 0, j = 0, aux = 0;

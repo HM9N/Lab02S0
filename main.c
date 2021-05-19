@@ -26,6 +26,7 @@ int main(int argc, char *argv[])
     char *str = (char *)malloc(sizeof(char) * MAX_SIZE);
     char *arr[MAX_SIZE], *pathArr[MAX_SIZE];
     int isRed, pathIndex = 0, pathCounter, pathModified = 0;
+    char error_message[30] = "An error has occurred\n";
     FILE *file;
 
     if (argc == 2)
@@ -56,12 +57,19 @@ int main(int argc, char *argv[])
         int windex = 0;
         while ((arr[windex] = strsep(&strAux, " \t\a\n\r")) != NULL)
         {
-            if (!strcmp(arr[0], "path"))
+            if (!strcmp(arr[0], "path") && (windex == 0))
             {
                 pathIndex = 0;
             }
 
             if ((windex >= 1) && !strcmp(arr[0], "path"))
+            {
+                pathArr[pathIndex] = arr[windex];
+
+                pathIndex++;
+            }
+
+            if ((windex >= 1) && !strcmp(arr[0], "cd"))
             {
                 pathArr[pathIndex] = arr[windex];
 
@@ -79,9 +87,22 @@ int main(int argc, char *argv[])
         builtinCommand command = strToCommand(arr[0]);
         if (command != not_command)
         {
+            char s[100];
             switch (command)
             {
             case cd:
+                if (pathIndex != 1)
+                {
+                    write(STDERR_FILENO, error_message, strlen(error_message));
+                }
+                else if (chdir(pathArr[0]) == 0)
+                {
+                    printf("Has cambiado a la ruta: %s\n", getcwd(s, 100));
+                }
+                else
+                {
+                    write(STDERR_FILENO, error_message, strlen(error_message));
+                }
                 break;
             case path:
                 pathModified = 1;
@@ -111,7 +132,6 @@ int main(int argc, char *argv[])
                 pathCounter = 1;
             }
 
-            /* printf("El pathIndex es %d \n", pathIndex); */
             int existPaths = searchPaths(searchPath, arr, pathCounter, &pathPosition);
 
             if (existPaths == 1)

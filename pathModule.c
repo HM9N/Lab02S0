@@ -11,7 +11,8 @@ void modifySearchPath(char *searchPath[], char *args[], int *pathCounter)
 {
     int i = 0;
     char *charUsedToDelete = "\0";
-    // printf("El pathCounter es %d\n", *pathCounter);
+
+    printf("El pathCounter es: %d\n", *pathCounter);
 
     if (*pathCounter == 0)
     {
@@ -45,13 +46,11 @@ int isPath(char *path)
 //Organiza los argumentos y la ruta para buscar si existe el ejecutable
 int searchPaths(char **path, char *args[], int pathCounter, int *pathPosition)
 {
-    /* printf("número pathCounter: %d \n", pathCounter); */
-    /* printf("%s path \n", path[0]); */
     char *bar = "/";
     int exists = 0;
     int i = 0;
     char pathAndFile[100];
-    while (i < pathCounter)
+    while (i < pathCounter && exists == 0)
     {
         strcpy(pathAndFile, path[i]);
         strcat(pathAndFile, bar);
