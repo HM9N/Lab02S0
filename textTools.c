@@ -67,7 +67,12 @@ void replaceLineBreak(char **line)
 {
     char *p = *line;
     while (*p != '\n')
-    {
+    { //printf("juana");
+        /* if (*p == EOF)
+        {
+            exit(0);
+        }
+ */
         p++;
     }
     *p = '\0';

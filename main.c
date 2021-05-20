@@ -9,6 +9,7 @@
 
 #define MAX_SIZE 100
 #define MAX_SIZE_SEARCH_PATH 300
+#define error_message "An error has occurred\n"
 
 /************************************************************************************************* 
   **********************************************************************************************
@@ -18,6 +19,7 @@ Código realizado por Jhon Vásquez para el curso de Sistemas Operativos de la U
 
 int main(int argc, char *argv[])
 {
+    printf("%d númeroooo\n", argc);
     char *searchPath[MAX_SIZE_SEARCH_PATH];
     searchPath[0] = "/bin";
     searchPath[1] = NULL;
@@ -26,12 +28,16 @@ int main(int argc, char *argv[])
     char *str = (char *)malloc(sizeof(char) * MAX_SIZE);
     char *arr[MAX_SIZE], *pathArr[MAX_SIZE];
     int isRed, pathIndex = 0, pathCounter, pathModified = 0;
-    char error_message[30] = "An error has occurred\n";
     FILE *file;
 
     if (argc == 2)
     {
         file = fopen(argv[1], "r");
+        if (file == NULL)
+        {
+            write(STDERR_FILENO, error_message, strlen(error_message));
+            exit(0);
+        }
     }
 
     do
@@ -40,6 +46,7 @@ int main(int argc, char *argv[])
         {
             printf("wish> ");
             fgets(str, MAX_SIZE, stdin);
+            replaceLineBreak(&str);
         }
         else if (argc > 2)
         {
@@ -48,9 +55,15 @@ int main(int argc, char *argv[])
         }
         else
         {
+            
+            if (feof(file))
+            {
+                exit(0);
+            }
+            
             fgets(str, 100, file);
         }
-        replaceLineBreak(&str);
+        printf("la puta str es: %s\n", str);
         char *strAux = (char *)malloc(sizeof(char) * MAX_SIZE);
         eliminateCharacters(str);
         strcpy(strAux, str);

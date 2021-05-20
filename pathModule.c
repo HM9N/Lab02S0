@@ -5,6 +5,7 @@
 #include <fcntl.h>
 #include <sys/wait.h>
 #include "pathModule.h"
+#define error_message "An error has occurred\n"
 
 // Se da la opción de modificar el Search Path al ejecutar el comando integrado "path"
 void modifySearchPath(char *searchPath[], char *args[], int *pathCounter)
@@ -74,7 +75,7 @@ void executeCommand(char *path, char *args[], int isRed)
     int rc = fork();
     if (rc < 0)
     {
-        fprintf(stderr, "fork failed\n");
+        write(STDERR_FILENO, error_message, strlen(error_message));
         exit(1);
     }
     else if (rc == 0)
@@ -110,7 +111,7 @@ void executeCommand(char *path, char *args[], int isRed)
 
         if (error == -1)
         {
-            printf("ha sucedido un error");
+           write(STDERR_FILENO, error_message, strlen(error_message));
         }
     }
     else
