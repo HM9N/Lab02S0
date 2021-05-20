@@ -19,7 +19,6 @@ Código realizado por Jhon Vásquez para el curso de Sistemas Operativos de la U
 
 int main(int argc, char *argv[])
 {
-    printf("%d númeroooo\n", argc);
     char *searchPath[MAX_SIZE_SEARCH_PATH];
     searchPath[0] = "/bin";
     searchPath[1] = NULL;
@@ -55,15 +54,15 @@ int main(int argc, char *argv[])
         }
         else
         {
-            
+
             if (feof(file))
             {
                 exit(0);
             }
-            
+
             fgets(str, 100, file);
         }
-        printf("la puta str es: %s\n", str);
+        
         char *strAux = (char *)malloc(sizeof(char) * MAX_SIZE);
         eliminateCharacters(str);
         strcpy(strAux, str);
@@ -78,14 +77,12 @@ int main(int argc, char *argv[])
             if ((windex >= 1) && !strcmp(arr[0], "path"))
             {
                 pathArr[pathIndex] = arr[windex];
-
                 pathIndex++;
             }
 
             if ((windex >= 1) && !strcmp(arr[0], "cd"))
             {
                 pathArr[pathIndex] = arr[windex];
-
                 pathIndex++;
             }
 
