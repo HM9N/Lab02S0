@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <fcntl.h>
 #include <sys/wait.h>
+#include <sys/time.h>
 #include "pathModule.h"
 #define error_message "An error has occurred\n"
 
@@ -43,8 +44,10 @@ int searchPaths(char **path, char *args[], int pathCounter, int *pathPosition)
 }
 
 // Ejecuta el comando
-void executeCommand(char *path, char *args[], int isRed)
+void executeCommand(char *path, char *args[])
 {
+    int initialTime = 0;
+    int finalTime = 0;
     int rc = fork();
     if (rc < 0)
     {
@@ -60,35 +63,20 @@ void executeCommand(char *path, char *args[], int isRed)
         strcat(aux, bar);
         strcat(aux, args[0]);
         int error;
-        if (isRed == 1)
-        {
-            unlink("output.txt");
-            int redirect_fd = open("output.txt", O_CREAT | O_TRUNC | O_WRONLY | O_EXCL, S_IRWXU);
-            dup2(redirect_fd, STDOUT_FILENO);
-            int i = 0;
-            char *argumentsRedirection[sizeof(*args)];
-            while (*args[i] != '>')
-            {
-                argumentsRedirection[i] = args[i];
-                i++;
-            }
 
-            argumentsRedirection[i] = NULL;
-
-            error = execv(aux, argumentsRedirection);
-        }
-        else
-        {
-            error = execv(aux, args);
-        }
+        initialTime = gettimeofday();
+        error = execv(aux, args);
 
         if (error == -1)
         {
-           write(STDERR_FILENO, error_message, strlen(error_message));
+            write(STDERR_FILENO, error_message, strlen(error_message));
         }
     }
     else
     {
         int rc_wait = wait(NULL);
+        finalTime = gettimeofday();
     }
+
+    printf("El tiempo transcurrido es: %d\n", initialTime - finalTime);
 }

@@ -5,6 +5,6 @@ int searchPaths(char **path, char *args[], int pathCounter, int *pathPosition);
 
 int isPath(char *path);
 
-void executeCommand(char *path, char *args[], int isRed);
+void executeCommand(char *path, char *args[]);
 
 #endif

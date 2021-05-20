@@ -13,7 +13,7 @@ void modifySearchPath(char *searchPath[], char *args[], int *pathCounter)
     int i = 0;
     char *charUsedToDelete = "\0";
 
-    printf("El pathCounter es: %d\n", *pathCounter);
+    //printf("El pathCounter es: %d\n", *pathCounter);
 
     if (*pathCounter == 0)
     {
@@ -56,7 +56,7 @@ int searchPaths(char **path, char *args[], int pathCounter, int *pathPosition)
         strcpy(pathAndFile, path[i]);
         strcat(pathAndFile, bar);
         strcat(pathAndFile, args[0]);
-        printf("El pathAndFile es %s \n", pathAndFile);
+        //printf("El pathAndFile es %s \n", pathAndFile);
         exists = isPath(pathAndFile);
         i++;
     }

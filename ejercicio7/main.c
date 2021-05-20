@@ -21,6 +21,7 @@ int main(int argc, char *argv[])
     char *str = (char *)malloc(sizeof(char) * MAX_SIZE);
     char *searchPath[MAX_SIZE_SEARCH_PATH];
     char *arr[MAX_SIZE], *pathArr[MAX_SIZE];
+    int pathIndex = 0, pathCounter = 1;
     searchPath[0] = "/bin";
     searchPath[1] = NULL;
 
@@ -28,9 +29,8 @@ int main(int argc, char *argv[])
     {
         if (argc == 1)
         {
-            printf("wish> ");
+            printf("time> ");
             fgets(str, MAX_SIZE, stdin);
-            replaceLineBreak(&str);
         }
         else if (argc > 2)
         {
@@ -38,6 +38,7 @@ int main(int argc, char *argv[])
             exit(0);
         }
 
+        replaceLineBreak(&str);
         char *strAux = (char *)malloc(sizeof(char) * MAX_SIZE);
         eliminateCharacters(str);
         strcpy(strAux, str);
@@ -49,6 +50,20 @@ int main(int argc, char *argv[])
 
         arr[windex] = NULL;
         free(strAux);
+
+        int pathPosition = 0;
+
+        int existPaths = searchPaths(searchPath, arr, pathCounter, &pathPosition);
+
+        if (existPaths == 1)
+        {
+            executeCommand(searchPath[pathPosition], arr);
+            //Función para ejecutar un comando externo
+        }
+        else
+        {
+            printf("No existe el comando \n");
+        }
 
     } while (strcmp(str, "exit\n"));
 

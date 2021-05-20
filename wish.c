@@ -52,9 +52,9 @@ int main(int argc, char *argv[])
             printf("Error");
             exit(0);
         }
-        else
+        else if (argc == 2 && strcmp(argv[0], "wish") != 0)
         {
-
+            /* code */
             if (feof(file))
             {
                 exit(0);
@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
 
             fgets(str, 100, file);
         }
-        
+
         char *strAux = (char *)malloc(sizeof(char) * MAX_SIZE);
         eliminateCharacters(str);
         strcpy(strAux, str);
@@ -107,7 +107,7 @@ int main(int argc, char *argv[])
                 }
                 else if (chdir(pathArr[0]) == 0)
                 {
-                    printf("Has cambiado a la ruta: %s\n", getcwd(s, 100));
+                    //printf("Has cambiado a la ruta: %s\n", getcwd(s, 100));
                 }
                 else
                 {
@@ -119,10 +119,17 @@ int main(int argc, char *argv[])
                 modifySearchPath(searchPath, pathArr, &pathIndex);
                 break;
             case endup:
-                exit(0);
+                if (argc > 1)
+                {
+                    write(STDERR_FILENO, error_message, strlen(error_message));
+                }
+                else
+                {
+                    exit(0);
+                }
                 break;
             default:
-                printf("Comando no encontrado\n");
+                write(STDERR_FILENO, error_message, strlen(error_message));
             }
         }
         else
@@ -151,7 +158,7 @@ int main(int argc, char *argv[])
             }
             else
             {
-                printf("No existe el comando \n");
+                write(STDERR_FILENO, error_message, strlen(error_message));
             }
         }
     } while (strcmp(str, "exit\n"));
