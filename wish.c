@@ -27,6 +27,8 @@ int main(int argc, char *argv[])
     char *str = (char *)malloc(sizeof(char) * MAX_SIZE);
     char *arr[MAX_SIZE], *pathArr[MAX_SIZE];
     int isRed, pathIndex = 0, pathCounter, pathModified = 0;
+    size_t numero_bytes = MAX_SIZE;
+    int line = 0;
     FILE *file;
 
     if (argc == 2)
@@ -45,7 +47,6 @@ int main(int argc, char *argv[])
         {
             printf("wish> ");
             fgets(str, MAX_SIZE, stdin);
-            replaceLineBreak(&str);
         }
         else if (argc > 2)
         {
@@ -54,33 +55,46 @@ int main(int argc, char *argv[])
         }
         else if (argc == 2 && strcmp(argv[0], "wish") != 0)
         {
-            /* code */
-            if (feof(file))
-            {
-                exit(0);
-            }
+            line = getline(&str, &numero_bytes, file);
 
-            fgets(str, 100, file);
+            if (line == -1)
+            {
+                if (argc != 1 && feof(file))
+                {
+                    fclose(file);
+                    exit(0);
+                }
+            }
+            //fgets(str, 100, file);
+
+            replaceLineBreak(&str);
+
+            // printf("El tamaño es: %ld\n", strlen(str));
+
+            for (int i = 0; i < strlen(str); i++)
+            {
+                //printf("El código ASCII es: %d\n", str[i]);
+                //printf("El apuntador es: %p\n", &str);
+                /* if (str[i] == EOF)
+                {
+                    printf("Llegamos al final \n ");
+                } */
+            }
         }
 
         char *strAux = (char *)malloc(sizeof(char) * MAX_SIZE);
         eliminateCharacters(str);
         strcpy(strAux, str);
+        //printf("Voy a ejecutar el comando %s \n", str);
         int windex = 0;
         while ((arr[windex] = strsep(&strAux, " \t\a\n\r")) != NULL)
         {
-            if (!strcmp(arr[0], "path") && (windex == 0))
+            if ((windex == 0))
             {
                 pathIndex = 0;
             }
 
-            if ((windex >= 1) && !strcmp(arr[0], "path"))
-            {
-                pathArr[pathIndex] = arr[windex];
-                pathIndex++;
-            }
-
-            if ((windex >= 1) && !strcmp(arr[0], "cd"))
+            if ((windex >= 1) && !strcmp(arr[0], "path") || (windex >= 1) && !strcmp(arr[0], "cd") || (windex >= 1) && !strcmp(arr[0], "exit"))
             {
                 pathArr[pathIndex] = arr[windex];
                 pathIndex++;
@@ -101,15 +115,7 @@ int main(int argc, char *argv[])
             switch (command)
             {
             case cd:
-                if (pathIndex != 1)
-                {
-                    write(STDERR_FILENO, error_message, strlen(error_message));
-                }
-                else if (chdir(pathArr[0]) == 0)
-                {
-                    //printf("Has cambiado a la ruta: %s\n", getcwd(s, 100));
-                }
-                else
+                if (pathIndex != 1 || chdir(pathArr[0]) != 0)
                 {
                     write(STDERR_FILENO, error_message, strlen(error_message));
                 }
@@ -119,9 +125,10 @@ int main(int argc, char *argv[])
                 modifySearchPath(searchPath, pathArr, &pathIndex);
                 break;
             case endup:
-                if (argc > 1)
+                if (pathIndex > 0)
                 {
                     write(STDERR_FILENO, error_message, strlen(error_message));
+                    break;
                 }
                 else
                 {
@@ -161,6 +168,7 @@ int main(int argc, char *argv[])
                 write(STDERR_FILENO, error_message, strlen(error_message));
             }
         }
+
     } while (strcmp(str, "exit\n"));
 
     return 0;
