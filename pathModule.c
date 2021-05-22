@@ -70,8 +70,9 @@ int searchPaths(char **path, char *args[], int pathCounter, int *pathPosition)
 }
 
 // Ejecuta el comando
-void executeCommand(char *path, char *args[], int isRed, int countRed)
+void executeCommand(char *path, char *args[], int isRed, int countRed, char *redirectionFile)
 {
+    //printf("el redirectionFile es %s\n", redirectionFile); 
     int rc = fork();
     if (rc < 0)
     {
@@ -80,6 +81,7 @@ void executeCommand(char *path, char *args[], int isRed, int countRed)
     }
     else if (rc == 0)
     {
+        /* printf("el count es %d\n", countRed); */
         char aux[100];
         char *bar = "/";
         strcpy(aux, path);
@@ -88,14 +90,13 @@ void executeCommand(char *path, char *args[], int isRed, int countRed)
         int error = 0;
         if (isRed == 1)
         {
-            unlink("output.txt");
-            int redirect_fd = open("output.txt", O_CREAT | O_TRUNC | O_WRONLY | O_EXCL, S_IRWXU);
-            dup2(redirect_fd, STDOUT_FILENO);
-            int i = 0;
-            char *argumentsRedirection[sizeof(*args)];
-
             if (countRed != 0)
             {
+                unlink(redirectionFile);
+                int redirect_fd = open(redirectionFile, O_CREAT | O_TRUNC | O_WRONLY | O_EXCL, S_IRWXU);
+                dup2(redirect_fd, STDOUT_FILENO);
+                int i = 0;
+                char *argumentsRedirection[sizeof(*args)];
                 while (*args[i] != '>')
                 {
                     argumentsRedirection[i] = args[i];

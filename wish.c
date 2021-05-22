@@ -19,13 +19,10 @@ Código realizado por Jhon Vásquez para el curso de Sistemas Operativos de la U
 
 int main(int argc, char *argv[])
 {
-    char *searchPath[MAX_SIZE_SEARCH_PATH];
+    char *arr[MAX_SIZE], *pathArr[MAX_SIZE], *arrRed[MAX_SIZE], *str = (char *)malloc(sizeof(char) * MAX_SIZE), *searchPath[MAX_SIZE_SEARCH_PATH], commandSearched[100], redirectionFile[100];
     searchPath[0] = "/bin";
     searchPath[1] = NULL;
-    char commandSearched[100];
     strcpy(commandSearched, searchPath[0]);
-    char *str = (char *)malloc(sizeof(char) * MAX_SIZE);
-    char *arr[MAX_SIZE], *pathArr[MAX_SIZE], *arrRed[MAX_SIZE];
     int isRed, pathIndex = 0, pathCounter, pathModified = 0, line = 0, countRed;
     size_t numero_bytes = MAX_SIZE;
     FILE *file;
@@ -49,7 +46,7 @@ int main(int argc, char *argv[])
         }
         else if (argc > 2)
         {
-            printf("Error");
+            write(STDERR_FILENO, error_message, strlen(error_message));
             exit(0);
         }
         else if (argc == 2 && strcmp(argv[0], "wish") != 0)
@@ -107,18 +104,23 @@ int main(int argc, char *argv[])
             char *auxToEliminateChars = (char *)malloc(sizeof(char) * MAX_SIZE);
             strcpy(auxToEliminateChars, arrRed[1]);
             eliminateCharacters(auxToEliminateChars);
-            for (int i = 0; i < strlen(arrRed[1]); i++)
+            if (strstr(auxToEliminateChars, " ") == NULL && k == 2)
             {
-                if (strstr(auxToEliminateChars, " ") || k > 1)
+                strcpy(redirectionFile, arrRed[1]);
+                for (int i = 0; i < strlen(arrRed[1]); i++)
                 {
-                    break;
-                }
-                if (arrRed[1][i] != ' ' && arrRed[1][i] != '\t' && arrRed[1][i] != '\a' && arrRed[1][i] != '\n')
-                {
-                    countRed++;
+                    if (arrRed[1][i] != ' ' && arrRed[1][i] != '\t' && arrRed[1][i] != '\a' && arrRed[1][i] != '\n')
+                    {
+                        countRed++;
+                    }
                 }
             }
+            else
+            {
+                strcpy(redirectionFile, " ");
+            }
 
+            eliminateCharacters(redirectionFile);
             free(strAuxRed);
             free(auxToEliminateChars);
         }
@@ -176,7 +178,7 @@ int main(int argc, char *argv[])
             if (existPaths == 1)
             {
                 //Función para ejecutar un comando externo
-                executeCommand(searchPath[pathPosition], arr, isRed, countRed);
+                executeCommand(searchPath[pathPosition], arr, isRed, countRed, redirectionFile);
             }
             else
             {

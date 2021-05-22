@@ -7,6 +7,6 @@ int searchPaths(char **path, char *args[], int pathCounter, int *pathPosition);
 
 int isPath(char *path);
 
-void executeCommand(char *path, char *args[], int isRed, int countRed);
+void executeCommand(char *path, char *args[], int isRed, int countRed, char *redirectionFile);
 
 #endif
