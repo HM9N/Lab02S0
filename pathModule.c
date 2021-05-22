@@ -70,7 +70,7 @@ int searchPaths(char **path, char *args[], int pathCounter, int *pathPosition)
 }
 
 // Ejecuta el comando
-void executeCommand(char *path, char *args[], int isRed)
+void executeCommand(char *path, char *args[], int isRed, int countRed)
 {
     int rc = fork();
     if (rc < 0)
@@ -83,10 +83,9 @@ void executeCommand(char *path, char *args[], int isRed)
         char aux[100];
         char *bar = "/";
         strcpy(aux, path);
-        int i = 0;
         strcat(aux, bar);
         strcat(aux, args[0]);
-        int error;
+        int error = 0;
         if (isRed == 1)
         {
             unlink("output.txt");
@@ -94,15 +93,22 @@ void executeCommand(char *path, char *args[], int isRed)
             dup2(redirect_fd, STDOUT_FILENO);
             int i = 0;
             char *argumentsRedirection[sizeof(*args)];
-            while (*args[i] != '>')
+
+            if (countRed != 0)
             {
-                argumentsRedirection[i] = args[i];
-                i++;
+                while (*args[i] != '>')
+                {
+                    argumentsRedirection[i] = args[i];
+                    i++;
+                }
+                argumentsRedirection[i] = NULL;
+                error = execv(aux, argumentsRedirection);
             }
-
-            argumentsRedirection[i] = NULL;
-
-            error = execv(aux, argumentsRedirection);
+            else
+            {
+                write(STDERR_FILENO, error_message, strlen(error_message));
+                exit(1);
+            }
         }
         else
         {
@@ -111,7 +117,8 @@ void executeCommand(char *path, char *args[], int isRed)
 
         if (error == -1)
         {
-           write(STDERR_FILENO, error_message, strlen(error_message));
+            write(STDERR_FILENO, error_message, strlen(error_message));
+            exit(1);
         }
     }
     else

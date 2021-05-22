@@ -25,10 +25,9 @@ int main(int argc, char *argv[])
     char commandSearched[100];
     strcpy(commandSearched, searchPath[0]);
     char *str = (char *)malloc(sizeof(char) * MAX_SIZE);
-    char *arr[MAX_SIZE], *pathArr[MAX_SIZE];
-    int isRed, pathIndex = 0, pathCounter, pathModified = 0;
+    char *arr[MAX_SIZE], *pathArr[MAX_SIZE], *arrRed[MAX_SIZE];
+    int isRed, pathIndex = 0, pathCounter, pathModified = 0, line = 0, countRed;
     size_t numero_bytes = MAX_SIZE;
-    int line = 0;
     FILE *file;
 
     if (argc == 2)
@@ -65,21 +64,7 @@ int main(int argc, char *argv[])
                     exit(0);
                 }
             }
-            //fgets(str, 100, file);
-
             replaceLineBreak(&str);
-
-            // printf("El tamaño es: %ld\n", strlen(str));
-
-            for (int i = 0; i < strlen(str); i++)
-            {
-                //printf("El código ASCII es: %d\n", str[i]);
-                //printf("El apuntador es: %p\n", &str);
-                /* if (str[i] == EOF)
-                {
-                    printf("Llegamos al final \n ");
-                } */
-            }
         }
 
         char *strAux = (char *)malloc(sizeof(char) * MAX_SIZE);
@@ -87,14 +72,10 @@ int main(int argc, char *argv[])
         strcpy(strAux, str);
         //printf("Voy a ejecutar el comando %s \n", str);
         int windex = 0;
+        pathIndex = 0;
         while ((arr[windex] = strsep(&strAux, " \t\a\n\r")) != NULL)
         {
-            if ((windex == 0))
-            {
-                pathIndex = 0;
-            }
-
-            if ((windex >= 1) && !strcmp(arr[0], "path") || (windex >= 1) && !strcmp(arr[0], "cd") || (windex >= 1) && !strcmp(arr[0], "exit"))
+            if ((windex >= 1) && (!strcmp(arr[0], "path") || !strcmp(arr[0], "cd") || !strcmp(arr[0], "exit")))
             {
                 pathArr[pathIndex] = arr[windex];
                 pathIndex++;
@@ -107,6 +88,43 @@ int main(int argc, char *argv[])
         free(strAux);
 
         isRed = isRedirection(str);
+
+        if (isRed)
+        {
+            countRed = 0;
+            char *strAuxRed = (char *)malloc(sizeof(char) * MAX_SIZE);
+            strcpy(strAuxRed, str);
+            /* printf("El valor longitud es:%ld \n", strlen(strAuxRed)); */
+
+            int k = 0;
+
+            while ((arrRed[k] = strsep(&strAuxRed, ">")) != NULL)
+            {
+                k++;
+            }
+
+            arrRed[k] == NULL;
+            k = 0;
+             char *auxToEliminateChars = (char *)malloc(sizeof(char) * MAX_SIZE);
+            strcpy(auxToEliminateChars, arrRed[1]);
+            eliminateCharacters(auxToEliminateChars);
+            for (int i = 0; i < strlen(arrRed[1]); i++)
+            {
+                if (strstr(auxToEliminateChars, " "))
+                {
+                    break;
+                }
+                if (arrRed[1][i] != ' ' && arrRed[1][i] != '\t' && arrRed[1][i] != '\a' && arrRed[1][i] != '\n')
+                {
+                    countRed++;
+                }
+            }
+
+            free(strAuxRed);
+            free(auxToEliminateChars);
+        }
+
+        //printf("el countRed es: %d\n", countRed);
 
         builtinCommand command = strToCommand(arr[0]);
         if (command != not_command)
@@ -161,7 +179,7 @@ int main(int argc, char *argv[])
             if (existPaths == 1)
             {
                 //Función para ejecutar un comando externo
-                executeCommand(searchPath[pathPosition], arr, isRed);
+                executeCommand(searchPath[pathPosition], arr, isRed, countRed);
             }
             else
             {
