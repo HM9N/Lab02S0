@@ -104,13 +104,12 @@ int main(int argc, char *argv[])
             }
 
             arrRed[k] == NULL;
-            k = 0;
-             char *auxToEliminateChars = (char *)malloc(sizeof(char) * MAX_SIZE);
+            char *auxToEliminateChars = (char *)malloc(sizeof(char) * MAX_SIZE);
             strcpy(auxToEliminateChars, arrRed[1]);
             eliminateCharacters(auxToEliminateChars);
             for (int i = 0; i < strlen(arrRed[1]); i++)
             {
-                if (strstr(auxToEliminateChars, " "))
+                if (strstr(auxToEliminateChars, " ") || k > 1)
                 {
                     break;
                 }
@@ -123,8 +122,6 @@ int main(int argc, char *argv[])
             free(strAuxRed);
             free(auxToEliminateChars);
         }
-
-        //printf("el countRed es: %d\n", countRed);
 
         builtinCommand command = strToCommand(arr[0]);
         if (command != not_command)
