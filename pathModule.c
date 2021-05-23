@@ -72,7 +72,7 @@ int searchPaths(char **path, char *args[], int pathCounter, int *pathPosition)
 // Ejecuta el comando
 void executeCommand(char *path, char *args[], int isRed, int countRed, char *redirectionFile)
 {
-    //printf("el redirectionFile es %s\n", redirectionFile); 
+    //printf("el redirectionFile es %s\n", redirectionFile);
     int rc = fork();
     if (rc < 0)
     {
@@ -89,7 +89,7 @@ void executeCommand(char *path, char *args[], int isRed, int countRed, char *red
         strcat(aux, args[0]);
         int error = 0;
         if (isRed == 1)
-        {
+        {   
             if (countRed != 0)
             {
                 unlink(redirectionFile);

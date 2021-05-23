@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
         if (file == NULL)
         {
             write(STDERR_FILENO, error_message, strlen(error_message));
-            exit(0);
+            exit(1);
         }
     }
 
@@ -47,11 +47,27 @@ int main(int argc, char *argv[])
         else if (argc > 2)
         {
             write(STDERR_FILENO, error_message, strlen(error_message));
-            exit(0);
+            exit(1);
         }
         else if (argc == 2 && strcmp(argv[0], "wish") != 0)
         {
             line = getline(&str, &numero_bytes, file);
+
+            countRed = 0;
+            for (int i = 0; i < strlen(str); i++)
+            {
+                //printf("El caracter es: %d\n", str[i]);
+                if (str[i] != 32 && str[i] != '\t' && str[i] != '\a' && str[i] != 10)
+                {
+                    countRed++;
+                }
+            }
+
+            if (countRed == 0)
+            {
+                //printf("Voy a continuar\n");
+                continue;
+            }
 
             if (line == -1)
             {
@@ -68,6 +84,7 @@ int main(int argc, char *argv[])
         eliminateCharacters(str);
         strcpy(strAux, str);
         //printf("Voy a ejecutar el comando %s \n", str);
+
         int windex = 0;
         pathIndex = 0;
         while ((arr[windex] = strsep(&strAux, " \t\a\n\r")) != NULL)
