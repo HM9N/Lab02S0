@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
     searchPath[0] = "/bin";
     searchPath[1] = NULL;
     strcpy(commandSearched, searchPath[0]);
-    int isRed, pathIndex = 0, pathCounter, pathModified = 0, line = 0, countRed, countArguments;
+    int isRed, pathIndex = 0, pathCounter = 0, pathModified = 0, line = 0, countRed, countArguments;
     size_t numero_bytes = MAX_SIZE;
     FILE *file;
 
@@ -39,6 +39,7 @@ int main(int argc, char *argv[])
 
     do
     {
+
         if (argc == 1)
         {
             printf("wish> ");
@@ -85,7 +86,6 @@ int main(int argc, char *argv[])
         //printf("Voy a ejecutar el comando %s \n", str);
 
         int windex = 0;
-        pathIndex = 0;
         countArguments = 0;
         while ((arr[windex] = strsep(&strAux, " \t\a\n\r")) != NULL)
         {
@@ -94,9 +94,13 @@ int main(int argc, char *argv[])
                 pathArr[pathIndex] = arr[windex];
                 pathIndex++;
             }
+            else if (windex == 0 && !strcmp(arr[0], "path"))
+            {
+                pathIndex = 0;
+            }
 
             if ((windex >= 1) && (!strcmp(arr[0], "cd") || !strcmp(arr[0], "exit")))
-            {   
+            {
                 pathArr[countArguments] = arr[windex];
                 countArguments++;
             }
@@ -187,11 +191,11 @@ int main(int argc, char *argv[])
             {
                 pathCounter = pathIndex - 2;
             }
-            else if ((pathIndex != 0) && pathModified == 1)
+            else if ((pathIndex != 0) && pathModified == 1 && !isRed)
             {
                 pathCounter = pathIndex;
             }
-            else if(pathModified == 0)
+            else if (pathModified == 0)
             {
                 pathCounter = 1;
             }

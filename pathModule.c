@@ -33,8 +33,8 @@ void modifySearchPath(char *searchPath[], char *args[], int *pathCounter)
         }
         searchPath[i] = NULL;
     }
-    /* int k = 0;
-    while (searchPath[k] != NULL)
+    int k = 0;
+   /*  while (searchPath[k] != NULL)
     {
         printf("El path %d es: %s\n", k, searchPath[k]);
         k++;
