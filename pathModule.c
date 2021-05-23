@@ -10,6 +10,7 @@
 // Se da la opción de modificar el Search Path al ejecutar el comando integrado "path"
 void modifySearchPath(char *searchPath[], char *args[], int *pathCounter)
 {
+
     int i = 0;
     char *charUsedToDelete = "\0";
 
@@ -32,6 +33,12 @@ void modifySearchPath(char *searchPath[], char *args[], int *pathCounter)
         }
         searchPath[i] = NULL;
     }
+    /* int k = 0;
+    while (searchPath[k] != NULL)
+    {
+        printf("El path %d es: %s\n", k, searchPath[k]);
+        k++;
+    } */
 }
 
 //Verifica que exista el ejecutable en la ruta especificada
@@ -47,6 +54,7 @@ int isPath(char *path)
 //Organiza los argumentos y la ruta para buscar si existe el ejecutable
 int searchPaths(char **path, char *args[], int pathCounter, int *pathPosition)
 {
+    //printf("El puto pathcounter mariquiando otra vez %d\n", pathCounter);
     char *bar = "/";
     int exists = 0;
     int i = 0;
@@ -89,7 +97,7 @@ void executeCommand(char *path, char *args[], int isRed, int countRed, char *red
         strcat(aux, args[0]);
         int error = 0;
         if (isRed == 1)
-        {   
+        {
             if (countRed != 0)
             {
                 unlink(redirectionFile);

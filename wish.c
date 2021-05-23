@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
     searchPath[0] = "/bin";
     searchPath[1] = NULL;
     strcpy(commandSearched, searchPath[0]);
-    int isRed, pathIndex = 0, pathCounter, pathModified = 0, line = 0, countRed;
+    int isRed, pathIndex = 0, pathCounter, pathModified = 0, line = 0, countRed, countArguments;
     size_t numero_bytes = MAX_SIZE;
     FILE *file;
 
@@ -65,7 +65,6 @@ int main(int argc, char *argv[])
 
             if (countRed == 0)
             {
-                //printf("Voy a continuar\n");
                 continue;
             }
 
@@ -87,12 +86,19 @@ int main(int argc, char *argv[])
 
         int windex = 0;
         pathIndex = 0;
+        countArguments = 0;
         while ((arr[windex] = strsep(&strAux, " \t\a\n\r")) != NULL)
         {
-            if ((windex >= 1) && (!strcmp(arr[0], "path") || !strcmp(arr[0], "cd") || !strcmp(arr[0], "exit")))
+            if ((windex >= 1) && !strcmp(arr[0], "path"))
             {
                 pathArr[pathIndex] = arr[windex];
                 pathIndex++;
+            }
+
+            if ((windex >= 1) && (!strcmp(arr[0], "cd") || !strcmp(arr[0], "exit")))
+            {   
+                pathArr[countArguments] = arr[windex];
+                countArguments++;
             }
 
             windex++;
@@ -149,7 +155,7 @@ int main(int argc, char *argv[])
             switch (command)
             {
             case cd:
-                if (pathIndex != 1 || chdir(pathArr[0]) != 0)
+                if (countArguments != 1 || chdir(pathArr[0]) != 0)
                 {
                     write(STDERR_FILENO, error_message, strlen(error_message));
                 }
@@ -159,7 +165,7 @@ int main(int argc, char *argv[])
                 modifySearchPath(searchPath, pathArr, &pathIndex);
                 break;
             case endup:
-                if (pathIndex > 0)
+                if (countArguments > 0)
                 {
                     write(STDERR_FILENO, error_message, strlen(error_message));
                     break;
@@ -185,7 +191,7 @@ int main(int argc, char *argv[])
             {
                 pathCounter = pathIndex;
             }
-            else
+            else if(pathModified == 0)
             {
                 pathCounter = 1;
             }
