@@ -94,3 +94,28 @@ int isParallelCommand(char *str)
 
     return 1;
 }
+
+
+// Organiza los comandos paralelos
+int formatParallelCommand(char *str, char *strAuxParCom, char **commands){
+    eliminateCharacters(str);
+    strcpy(strAuxParCom, str);
+    int windex = 0;
+    while ((commands[windex] = strsep(&strAuxParCom, "&")) != NULL)
+        {
+            windex++;
+        }
+
+    commands[windex] == NULL;
+
+    int i = 0;
+
+    while (commands[i] != NULL)
+    {
+        //printf("El comando es %s\n", commands[i]);
+        eliminateCharacters(commands[i]);
+        i++;
+    }
+
+    return windex;
+}

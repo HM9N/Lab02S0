@@ -19,11 +19,12 @@ Código realizado por Jhon Vásquez para el curso de Sistemas Operativos de la U
 
 int main(int argc, char *argv[])
 {
-    char *arr[MAX_SIZE], *pathArr[MAX_SIZE], *arrRed[MAX_SIZE], *str = (char *)malloc(sizeof(char) * MAX_SIZE), *searchPath[MAX_SIZE_SEARCH_PATH], commandSearched[100], redirectionFile[100];
+    char *arr[MAX_SIZE], *pathArr[MAX_SIZE], *arrRed[MAX_SIZE], *str = (char *)malloc(sizeof(char) * MAX_SIZE), *searchPath[MAX_SIZE_SEARCH_PATH];
+    char *arrParCom[MAX_SIZE], commandSearched[100], redirectionFile[100];
     searchPath[0] = "/bin";
     searchPath[1] = NULL;
     strcpy(commandSearched, searchPath[0]);
-    int isRed, pathIndex = 0, pathCounter = 0, pathModified = 0, line = 0, countRed, countArguments;
+    int isRed, pathIndex = 0, pathCounter = 0, pathModified = 0, line = 0, countRed, countArguments, isParCom, parComCounter;
     size_t numero_bytes = MAX_SIZE;
     FILE *file;
 
@@ -39,7 +40,6 @@ int main(int argc, char *argv[])
 
     do
     {
-
         if (argc == 1)
         {
             printf("wish> ");
@@ -57,7 +57,6 @@ int main(int argc, char *argv[])
             countRed = 0;
             for (int i = 0; i < strlen(str); i++)
             {
-                //printf("El caracter es: %d\n", str[i]);
                 if (str[i] != 32 && str[i] != '\t' && str[i] != '\a' && str[i] != 10)
                 {
                     countRed++;
@@ -80,138 +79,173 @@ int main(int argc, char *argv[])
             replaceLineBreak(&str);
         }
 
-        char *strAux = (char *)malloc(sizeof(char) * MAX_SIZE);
         eliminateCharacters(str);
-        strcpy(strAux, str);
-        //printf("Voy a ejecutar el comando %s \n", str);
 
-        int windex = 0;
-        countArguments = 0;
-        while ((arr[windex] = strsep(&strAux, " \t\a\n\r")) != NULL)
+        //Inicio For
+
+        isParCom = isParallelCommand(str);
+
+        // Verifica si son comandos paralelos
+        if (isParCom)
         {
-            if ((windex >= 1) && !strcmp(arr[0], "path"))
+            char *strAuxParCom = (char *)malloc(sizeof(char) * MAX_SIZE);
+
+            parComCounter = formatParallelCommand(str, strAuxParCom, arrParCom);
+            //printf("Es paralelo\n");
+            if (parComCounter == -1)
             {
-                pathArr[pathIndex] = arr[windex];
-                pathIndex++;
-            }
-            else if (windex == 0 && !strcmp(arr[0], "path"))
-            {
-                pathIndex = 0;
-            }
-
-            if ((windex >= 1) && (!strcmp(arr[0], "cd") || !strcmp(arr[0], "exit")))
-            {
-                pathArr[countArguments] = arr[windex];
-                countArguments++;
-            }
-
-            windex++;
-        }
-
-        arr[windex] = NULL;
-        free(strAux);
-
-        isRed = isRedirection(str);
-
-        if (isRed)
-        {
-            countRed = 0;
-            char *strAuxRed = (char *)malloc(sizeof(char) * MAX_SIZE);
-            strcpy(strAuxRed, str);
-            /* printf("El valor longitud es:%ld \n", strlen(strAuxRed)); */
-
-            int k = 0;
-
-            while ((arrRed[k] = strsep(&strAuxRed, ">")) != NULL)
-            {
-                k++;
-            }
-
-            arrRed[k] == NULL;
-            char *auxToEliminateChars = (char *)malloc(sizeof(char) * MAX_SIZE);
-            strcpy(auxToEliminateChars, arrRed[1]);
-            eliminateCharacters(auxToEliminateChars);
-            if (strstr(auxToEliminateChars, " ") == NULL && k == 2)
-            {
-                strcpy(redirectionFile, arrRed[1]);
-                for (int i = 0; i < strlen(arrRed[1]); i++)
-                {
-                    if (arrRed[1][i] != ' ' && arrRed[1][i] != '\t' && arrRed[1][i] != '\a' && arrRed[1][i] != '\n')
-                    {
-                        countRed++;
-                    }
-                }
-            }
-            else
-            {
-                strcpy(redirectionFile, " ");
-            }
-
-            eliminateCharacters(redirectionFile);
-            free(strAuxRed);
-            free(auxToEliminateChars);
-        }
-
-        builtinCommand command = strToCommand(arr[0]);
-        if (command != not_command)
-        {
-            char s[100];
-            switch (command)
-            {
-            case cd:
-                if (countArguments != 1 || chdir(pathArr[0]) != 0)
-                {
-                    write(STDERR_FILENO, error_message, strlen(error_message));
-                }
-                break;
-            case path:
-                pathModified = 1;
-                modifySearchPath(searchPath, pathArr, &pathIndex);
-                break;
-            case endup:
-                if (countArguments > 0)
-                {
-                    write(STDERR_FILENO, error_message, strlen(error_message));
-                    break;
-                }
-                else
-                {
-                    exit(0);
-                }
-                break;
-            default:
                 write(STDERR_FILENO, error_message, strlen(error_message));
+                continue;
             }
         }
         else
         {
-            int pathPosition = 0; // Variable para devolver la posición del path en el search path
-            // Busca el ejecutable en las rutas, si ejecuta el programa devuelve un uno, en caso contrario devuelve un 0
-            if (isRed && pathModified == 1)
+            arrParCom[0] = str;
+            parComCounter = 1;
+        }
+
+        //printf("El parComcounter es: %d\n", parComCounter);
+
+        // for que se repite dependiendo la cantidad de comandos paralelos
+        for (int l = 0; l < parComCounter; l++)
+        {
+            char *strAux = (char *)malloc(sizeof(char) * MAX_SIZE);
+            /* eliminateCharacters(str); */
+            //strcpy(strAux, str);
+            strcpy(strAux, arrParCom[l]);
+            //printf("Voy a ejecutar el comando %s \n", str);
+
+            int windex = 0;
+            countArguments = 0;
+            while ((arr[windex] = strsep(&strAux, " \t\a\n\r")) != NULL)
             {
-                pathCounter = pathIndex - 2;
-            }
-            else if ((pathIndex != 0) && pathModified == 1 && !isRed)
-            {
-                pathCounter = pathIndex;
-            }
-            else if (pathModified == 0)
-            {
-                pathCounter = 1;
+                if ((windex >= 1) && !strcmp(arr[0], "path"))
+                {
+                    pathArr[pathIndex] = arr[windex];
+                    pathIndex++;
+                }
+                else if (windex == 0 && !strcmp(arr[0], "path"))
+                {
+                    pathIndex = 0;
+                }
+
+                if ((windex >= 1) && (!strcmp(arr[0], "cd") || !strcmp(arr[0], "exit")))
+                {
+                    pathArr[countArguments] = arr[windex];
+                    countArguments++;
+                }
+
+                windex++;
             }
 
-            int existPaths = searchPaths(searchPath, arr, pathCounter, &pathPosition);
+            arr[windex] = NULL;
+            free(strAux);
 
-            if (existPaths == 1)
+            //isRed = isRedirection(str);
+            isRed = isRedirection(arrParCom[l]);
+
+            if (isRed)
             {
-                //Función para ejecutar un comando externo
-                executeCommand(searchPath[pathPosition], arr, isRed, countRed, redirectionFile);
+                countRed = 0;
+                char *strAuxRed = (char *)malloc(sizeof(char) * MAX_SIZE);
+                //strcpy(strAuxRed, str);
+                strcpy(strAuxRed, arrParCom[l]);
+                /* printf("El valor longitud es:%ld \n", strlen(strAuxRed)); */
+
+                int k = 0;
+                while ((arrRed[k] = strsep(&strAuxRed, ">")) != NULL)
+                {
+                    k++;
+                }
+
+                arrRed[k] == NULL;
+                char *auxToEliminateChars = (char *)malloc(sizeof(char) * MAX_SIZE);
+                strcpy(auxToEliminateChars, arrRed[1]);
+                eliminateCharacters(auxToEliminateChars);
+                if (strstr(auxToEliminateChars, " ") == NULL && k == 2)
+                {
+                    strcpy(redirectionFile, arrRed[1]);
+                    for (int i = 0; i < strlen(arrRed[1]); i++)
+                    {
+                        if (arrRed[1][i] != ' ' && arrRed[1][i] != '\t' && arrRed[1][i] != '\a' && arrRed[1][i] != '\n')
+                        {
+                            countRed++;
+                        }
+                    }
+                }
+                else
+                {
+                    strcpy(redirectionFile, " ");
+                }
+
+                eliminateCharacters(redirectionFile);
+                free(strAuxRed);
+                free(auxToEliminateChars);
+            }
+
+            builtinCommand command = strToCommand(arr[0]);
+            if (command != not_command)
+            {
+                char s[100];
+                switch (command)
+                {
+                case cd:
+                    if (countArguments != 1 || chdir(pathArr[0]) != 0)
+                    {
+                        write(STDERR_FILENO, error_message, strlen(error_message));
+                    }
+                    break;
+                case path:
+                    pathModified = 1;
+                    modifySearchPath(searchPath, pathArr, &pathIndex);
+                    break;
+                case endup:
+                    if (countArguments > 0)
+                    {
+                        write(STDERR_FILENO, error_message, strlen(error_message));
+                        break;
+                    }
+                    else
+                    {
+                        exit(0);
+                    }
+                    break;
+                default:
+                    write(STDERR_FILENO, error_message, strlen(error_message));
+                }
             }
             else
             {
-                write(STDERR_FILENO, error_message, strlen(error_message));
+                int pathPosition = 0; // Variable para devolver la posición del path en el search path
+                // Busca el ejecutable en las rutas, si ejecuta el programa devuelve un uno, en caso contrario devuelve un 0
+                if (isRed && pathModified == 1)
+                {
+                    pathCounter = pathIndex - 2;
+                }
+                else if ((pathIndex != 0) && pathModified == 1 && !isRed)
+                {
+                    pathCounter = pathIndex;
+                }
+                else if (pathModified == 0)
+                {
+                    pathCounter = 1;
+                }
+
+                int existPaths = searchPaths(searchPath, arr, pathCounter, &pathPosition);
+
+                if (existPaths == 1)
+                {
+                    //Función para ejecutar un comando externo
+                    executeCommand(searchPath[pathPosition], arr, isRed, countRed, redirectionFile);
+                }
+                else
+                {
+                    write(STDERR_FILENO, error_message, strlen(error_message));
+                }
             }
         }
+
+        // END FOR
 
     } while (strcmp(str, "exit\n"));
 

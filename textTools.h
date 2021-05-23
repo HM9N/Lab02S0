@@ -9,4 +9,6 @@ int isRedirection(char *str);
 
 int isParallelCommand(char *str);
 
+int formatParallelCommand(char *str, char *strAuxParCom, char **commands);
+
 #endif
