@@ -115,6 +115,11 @@ int main(int argc, char *argv[])
             strcpy(strAux, arrParCom[l]);
             //printf("Voy a ejecutar el comando %s \n", str);
 
+            if (strlen(strAux) == 0)
+            {
+                continue;
+            }
+
             int windex = 0;
             countArguments = 0;
             while ((arr[windex] = strsep(&strAux, " \t\a\n\r")) != NULL)
@@ -198,6 +203,7 @@ int main(int argc, char *argv[])
                 case path:
                     pathModified = 1;
                     modifySearchPath(searchPath, pathArr, &pathIndex);
+                    //pathModifiedNow = 1;
                     break;
                 case endup:
                     if (countArguments > 0)
@@ -216,13 +222,14 @@ int main(int argc, char *argv[])
             }
             else
             {
+                //printf("No recuerdo esas cosas de if\n");
                 int pathPosition = 0; // Variable para devolver la posición del path en el search path
-                // Busca el ejecutable en las rutas, si ejecuta el programa devuelve un uno, en caso contrario devuelve un 0
-                if (isRed && pathModified == 1)
+                                      // Busca el ejecutable en las rutas, si ejecuta el programa devuelve un uno, en caso contrario devuelve un 0
+                                      /* if (isRed && pathModified == 1 && pathModifiedNow ==1)
                 {
                     pathCounter = pathIndex - 2;
-                }
-                else if ((pathIndex != 0) && pathModified == 1 && !isRed)
+                } */
+                if ((pathIndex != 0) && pathModified == 1)
                 {
                     pathCounter = pathIndex;
                 }
@@ -242,6 +249,8 @@ int main(int argc, char *argv[])
                 {
                     write(STDERR_FILENO, error_message, strlen(error_message));
                 }
+
+               // printf("El pathCounter es: %d\n", pathCounter);
             }
         }
 
