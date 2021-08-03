@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
     do
     {
         if (argc == 1)
-        {
+        {  
             printf("time> ");
             fgets(str, MAX_SIZE, stdin);
         }

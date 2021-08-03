@@ -46,8 +46,8 @@ int searchPaths(char **path, char *args[], int pathCounter, int *pathPosition)
 // Ejecuta el comando
 void executeCommand(char *path, char *args[])
 {
-    int initialTime = 0;
-    int finalTime = 0;
+    struct timeval inicio, fin;
+    gettimeofday(&inicio, NULL); 
     int rc = fork();
     if (rc < 0)
     {
@@ -55,7 +55,7 @@ void executeCommand(char *path, char *args[])
         exit(1);
     }
     else if (rc == 0)
-    {
+    {   
         char aux[100];
         char *bar = "/";
         strcpy(aux, path);
@@ -63,8 +63,7 @@ void executeCommand(char *path, char *args[])
         strcat(aux, bar);
         strcat(aux, args[0]);
         int error;
-
-        initialTime = gettimeofday();
+  
         error = execv(aux, args);
 
         if (error == -1)
@@ -75,8 +74,10 @@ void executeCommand(char *path, char *args[])
     else
     {
         int rc_wait = wait(NULL);
-        finalTime = gettimeofday();
+         gettimeofday(&fin, NULL);
+        double secs = (double)(fin.tv_usec - inicio.tv_usec) / 1000000 + (double)(fin.tv_sec - inicio.tv_sec);
+        printf("Tiempo de ejecucion: %f segundos\n", secs);
+        
     }
 
-    printf("El tiempo transcurrido es: %d\n", initialTime - finalTime);
 }
